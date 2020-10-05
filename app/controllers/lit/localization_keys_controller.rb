@@ -74,23 +74,23 @@ module Lit
                         else
                           params.slice(*valid_keys)
                         end
-      @scope = LocalizationKey.distinct.active
-                              .preload(localizations: :locale)
-                              .search(@search_options)
+      @scope = LocalizationKey.distinct.active.
+        preload(localizations: :locale).
+        search(@search_options)
     end
 
     def get_localization_keys
-      key_parts = @search_options[:key_prefix].to_s.split('.').length
-      @prefixes = @scope.reorder(nil).distinct.pluck(:localization_key).map { |lk| lk.split('.').shift(key_parts + 1).join('.') }.uniq.sort
+      key_parts = @search_options[:key_prefix].to_s.split(".").length
+      @prefixes = @scope.reorder(nil).distinct.pluck(:localization_key).map { |lk| lk.split(".").shift(key_parts + 1).join(".") }.uniq.sort
       if @search_options[:key_prefix].present?
-        parts = @search_options[:key_prefix].split('.')
-        @parent_prefix = parts[0, parts.length - 1].join('.')
+        parts = @search_options[:key_prefix].split(".")
+        @parent_prefix = parts[0, parts.length - 1].join(".")
       end
-      if defined?(Kaminari) and @scope.respond_to?(Kaminari.config.page_method_name)
-        @localization_keys = @scope.send(Kaminari.config.page_method_name, params[:page])
-      else
-        @localization_keys = @scope
-      end
+      @localization_keys = if defined?(Kaminari) && @scope.respond_to?(Kaminari.config.page_method_name)
+                             @scope.send(Kaminari.config.page_method_name, params[:page])
+                           else
+                             @scope
+                           end
     end
 
     def valid_keys
@@ -122,7 +122,7 @@ module Lit
           Lit.init.cache.refresh_key("#{locale}.#{localization_key.localization_key}")
           ret = localization_key.localizations.where(locale_id: Lit.init.cache.find_locale(locale).id).first
         end
-        @_localization_for[key] = ret ? ret : false
+        @_localization_for[key] = ret || false
       else
         ret
       end
