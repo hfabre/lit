@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+## 1.0.4
+
+### Fixed
+
+- ensure not to throw an error if localization_key is not a hash key
+
 ## 1.0.3
 
 ### Fixed
