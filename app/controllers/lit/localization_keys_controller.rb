@@ -117,7 +117,7 @@ module Lit
       if ret == false
         nil
       elsif ret.nil?
-        ret = grouped_localizations[localization_key][locale]
+        ret = grouped_localizations.dig(localization_key, locale)
         unless ret
           Lit.init.cache.refresh_key("#{locale}.#{localization_key.localization_key}")
           ret = localization_key.localizations.where(locale_id: Lit.init.cache.find_locale(locale).id).first
